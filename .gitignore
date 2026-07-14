@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+backend/.env
+backend/data/
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/*.exe
+.idea/
