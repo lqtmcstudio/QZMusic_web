@@ -1,7 +1,7 @@
 <script setup>
 import { ArrowRight, AudioLines, Blocks, Cloud, Code2, Gauge, Sparkles } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
-import logoUrl from '../../old/assets/logo.png'
+import logoUrl from '../../src/icon.png'
 
 const features = [
   { icon: Blocks, title: '插件化', copy: '以 NodeJS 为插件基础平台，让音乐能力自由延伸。' },

@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { LogIn, LogOut, Menu, Moon, Sun, X } from 'lucide-vue-next'
-import logoUrl from '../../old/assets/logo.png'
+import logoUrl from '../../src/icon.png'
 import { appStore } from '../stores/app'
 
 const menuOpen = ref(false)
