@@ -6,6 +6,8 @@ import { renderMarkdown } from '../lib/markdown'
 const props = defineProps({ update: Object, canEdit: Boolean })
 defineEmits(['like', 'comments', 'edit'])
 const content = computed(() => renderMarkdown(props.update.body))
+const scopeLabels = { frontend: '前端', backend: '后端', android: '安卓', pc: 'PC', all: '全端' }
+const scopeLabel = computed(() => scopeLabels[props.update.scope] || '')
 </script>
 
 <template>
@@ -13,6 +15,7 @@ const content = computed(() => renderMarkdown(props.update.body))
     <div class="card-content">
       <header class="card-kicker">
         <span class="status-pill status-pill--brand"><i />开发动态</span>
+        <span v-if="scopeLabel" class="status-pill status-pill--purple"><i />{{ scopeLabel }}</span>
         <time>{{ update.createdAt }}</time>
         <button v-if="canEdit" class="icon-button icon-button--tiny" type="button" aria-label="编辑动态" @click="$emit('edit', update)"><Pencil :size="15" /></button>
       </header>

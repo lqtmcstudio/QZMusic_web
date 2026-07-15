@@ -7,6 +7,7 @@ import ModalShell from '../components/ModalShell.vue'
 import UpdateCard from '../components/UpdateCard.vue'
 import { api } from '../lib/api'
 import { appStore } from '../stores/app'
+import { siteConfig } from '../lib/siteConfig'
 
 const items = ref([])
 const loading = ref(true)
@@ -14,8 +15,17 @@ const formOpen = ref(false)
 const saving = ref(false)
 const editingId = ref(null)
 const commentItem = ref(null)
-const form = reactive({ title: '', body: '', images: [] })
+const form = reactive({ title: '', body: '', scope: '', images: [] })
 const isDeveloper = computed(() => !!appStore.state.me?.isDeveloper)
+
+const scopeOptions = [
+  { value: '', label: '不标注' },
+  { value: 'frontend', label: '前端' },
+  { value: 'backend', label: '后端' },
+  { value: 'android', label: '安卓' },
+  { value: 'pc', label: 'PC' },
+  { value: 'all', label: '全端' },
+]
 
 async function load() {
   loading.value = true
@@ -29,14 +39,14 @@ async function load() {
 }
 
 function openCreate() {
-  Object.assign(form, { title: '', body: '', images: [] })
+  Object.assign(form, { title: '', body: '', scope: '', images: [] })
   editingId.value = null
   formOpen.value = true
 }
 
 function openEdit(item) {
   editingId.value = item.id
-  Object.assign(form, { title: item.title, body: item.body, images: [] })
+  Object.assign(form, { title: item.title, body: item.body, scope: item.scope || '', images: [] })
   formOpen.value = true
 }
 
@@ -49,7 +59,7 @@ async function save() {
   if (!form.title.trim() || !form.body.trim()) return appStore.toast('标题和正文都需要填写', 'warning')
   saving.value = true
   try {
-    const payload = { title: form.title, body: form.body }
+    const payload = { title: form.title, body: form.body, scope: form.scope }
     if (editingId.value) await api.updateUpdate(editingId.value, payload)
     else await api.createUpdate(payload)
     formOpen.value = false
@@ -96,9 +106,9 @@ onMounted(load)
   <div class="plaza-view updates-view">
     <section class="plaza-hero plaza-hero--updates shell-width">
       <div>
-        <span class="eyebrow">FROM THE BUILD ROOM</span>
-        <h1>开发，不只是<br /><em>完成清单。</em></h1>
-        <p>这里记录新功能、修复，以及那些值得讲述的取舍。来自 QZ Music 开发者的第一手记录。</p>
+        <span class="eyebrow">{{ siteConfig.updates.heroEyebrow }}</span>
+        <h1>{{ siteConfig.updates.heroTitle }}<br /><em>{{ siteConfig.updates.heroTitleEm }}</em></h1>
+        <p>{{ siteConfig.updates.heroSubtitle }}</p>
       </div>
       <div class="code-note" aria-hidden="true">
         <span>01</span><p><b>feat</b>(player): spring motion</p>
@@ -134,6 +144,7 @@ onMounted(load)
     <ModalShell :open="formOpen" :title="editingId ? '编辑开发动态' : '发布开发动态'" eyebrow="WRITE IN MARKDOWN" wide @close="formOpen = false">
       <form class="editor-form" @submit.prevent="save">
         <label>标题<input v-model="form.title" maxlength="120" /></label>
+        <label>涉及范围<select v-model="form.scope"><option v-for="opt in scopeOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option></select></label>
         <label>正文<textarea v-model="form.body" maxlength="20000" rows="12" /></label>
         <div class="field-group">
           <span>插入图片</span>

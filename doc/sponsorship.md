@@ -7,7 +7,7 @@
 
 | 图标 | 昵称 / 品牌 | 贡献内容 | 备注 |
 | --- | --- | --- | --- |
-| ![](https://sadidc.com/themes/clientarea/yunyoo/assets/images/favicon.ico){style="border-radius:50%;width:48px;height:48px"} | <span class="neon-gradient-text">**伤心的云（SadCloud）**</span> | 长期赞助高性能云服务器 | 超高性价比 > 成都云服热售中！[伤心的云](https://sadidc.com/?from=qz) |
+| <img src="https://sadidc.com/themes/clientarea/yunyoo/assets/images/favicon.ico" width="32" height="32" style="border-radius:50%;vertical-align:middle"> | <span class="neon-gradient-text">**伤心的云（SadCloud）**</span> | 长期赞助高性能云服务器 | 超高性价比 > 成都云服热售中！[伤心的云](https://sadidc.com/?from=qz) |
 
 > 本项目核心服务部署在 SadCloud，稳定、速度快、价格良心～
 

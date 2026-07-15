@@ -1,7 +1,8 @@
 <script setup>
-import { ArrowRight, AudioLines, Blocks, Cloud, Code2, Gauge, Github, Sparkles, Tv } from 'lucide-vue-next'
+import { ArrowRight, AudioLines, Blocks, Cloud, Code2, Gauge, Github, Monitor, Sparkles, Tv, Users } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import logoUrl from '../../src/icon.png'
+import { siteConfig } from '../lib/siteConfig'
 
 const features = [
   { icon: Blocks, title: '插件化', copy: '基于 NodeJS 的插件体系，让音乐能力自由延伸。' },
@@ -17,9 +18,11 @@ const contributors = [
     avatar: 'https://avatars.githubusercontent.com/u/108458240?v=4',
     github: 'https://github.com/miao-moe',
     bilibili: 'https://space.bilibili.com/3546566025140405',
+    bio: '喵喵喵～欢迎找我玩呀 嘻嘻(◍•ᴗ•◍)',
     tags: [
       { icon: Code2, label: '官网重构' },
-      { icon: Tv, label: 'PC 端维护' },
+      { icon: Monitor, label: 'PC 端维护' },
+      { icon: Users, label: '协助开发' },
     ],
   },
 ]
@@ -29,14 +32,14 @@ const contributors = [
   <div class="home-view">
     <section class="home-hero shell-width">
       <div class="hero-copy">
-        <div class="hero-badge"><span /> QZ Music v2 正在持续生长</div>
-        <h1>让每一次播放，<br /><em>都有回响。</em></h1>
-        <p>一款纯净、流畅，也认真倾听每种想法的多功能音乐播放器。</p>
+        <div class="hero-badge"><span /> {{ siteConfig.home.heroBadge }}</div>
+        <h1>{{ siteConfig.home.heroTitle }}<br /><em>{{ siteConfig.home.heroTitleEm }}</em></h1>
+        <p>{{ siteConfig.home.heroSubtitle }}</p>
         <div class="hero-actions">
           <RouterLink class="button" to="/blueprints">走进蓝图 <ArrowRight :size="18" /></RouterLink>
           <RouterLink class="text-link" to="/updates">阅读开发动态 <span>↗</span></RouterLink>
         </div>
-        <div class="hero-note"><Sparkles :size="17" /> 你提出的下一个想法，或许正是我们正在打磨的功能。</div>
+        <div class="hero-note"><Sparkles :size="17" /> {{ siteConfig.home.heroNote }}</div>
       </div>
 
       <div class="hero-visual" aria-label="QZ Music 产品视觉">
@@ -61,10 +64,10 @@ const contributors = [
 
     <section class="home-manifesto shell-width">
       <div class="section-heading">
-        <span class="eyebrow">BUILT WITH THE COMMUNITY</span>
-        <h2>播放器由代码构成，<br />体验由每个人共同完成。</h2>
+        <span class="eyebrow">{{ siteConfig.home.manifestoEyebrow }}</span>
+        <h2>{{ siteConfig.home.manifestoTitle }}<br />{{ siteConfig.home.manifestoTitleLine2 }}</h2>
       </div>
-      <p>从 Flutter 到 Jetpack Compose，从单一脚本到 NodeJS 插件系统，QZ Music 的每一次重构，都为了更轻、更自由。如今，开发过程也向你敞开。</p>
+      <p>{{ siteConfig.home.manifestoBody }}</p>
     </section>
 
     <section class="feature-grid shell-width">
@@ -110,6 +113,7 @@ const contributors = [
               <a :href="person.github" target="_blank" rel="noreferrer noopener">{{ person.handle }}</a>
             </div>
           </header>
+          <p v-if="person.bio" class="contributor-bio">{{ person.bio }}</p>
           <ul class="contributor-tags">
             <li v-for="tag in person.tags" :key="tag.label">
               <component :is="tag.icon" :size="14" /> {{ tag.label }}
@@ -119,7 +123,7 @@ const contributors = [
             <a class="contributor-link contributor-link--github" :href="person.github" target="_blank" rel="noreferrer noopener">
               <Github :size="16" /> GitHub
             </a>
-            <a v-if="person.bilibili" class="contributor-link contributor-link--bili" :href="person.bilibili" target="_blank" rel="noreferrer noopener">
+            <a v-if="person.bilibili" class="contributor-link contributor-link--bili" :href="person.bilibili" target="_blank" rel="noreferrer noopener" aria-label="哔哩哔哩主页">
               <Tv :size="16" /> 哔哩哔哩
             </a>
           </footer>
