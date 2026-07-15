@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { AlertCircle, ExternalLink, FileCode2, GitCommitHorizontal, LoaderCircle, Monitor, RefreshCw, Smartphone } from 'lucide-vue-next'
 import { api } from '../lib/api'
 import { appStore } from '../stores/app'
+import { renderMarkdown } from '../lib/markdown'
 import { siteConfig } from '../lib/siteConfig'
 
 const platforms = [
@@ -114,7 +115,7 @@ onBeforeUnmount(() => window.clearInterval(refreshTimer))
             <time :datetime="commit.committedAt">{{ formatDate(commit.committedAt) }}</time>
           </header>
           <h2>{{ commit.title }}</h2>
-          <p v-if="commit.body" class="commit-body">{{ commit.body }}</p>
+          <div v-if="commit.body" class="commit-body markdown-body" v-html="renderMarkdown(commit.body)" />
           <footer>
             <div class="commit-author">
               <img v-if="commit.authorAvatar" :src="commit.authorAvatar" alt="" />

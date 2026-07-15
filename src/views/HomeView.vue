@@ -17,7 +17,7 @@ const contributors = [
     handle: '@miao-moe',
     avatar: 'https://avatars.githubusercontent.com/u/108458240?v=4',
     github: 'https://github.com/miao-moe',
-    bilibili: 'https://space.bilibili.com/3546566025140405',
+    bilibili: 'https://space.bilibili.com/3493111909058760',
     bio: '喵喵喵～欢迎找我玩呀 嘻嘻(◍•ᴗ•◍)',
     tags: [
       { icon: Code2, label: '官网重构' },

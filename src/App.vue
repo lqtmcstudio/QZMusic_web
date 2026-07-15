@@ -3,8 +3,12 @@ import { onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import { appStore } from './stores/app'
+import { loadSiteConfig } from './lib/siteConfig'
 
-onMounted(() => appStore.loadMe())
+onMounted(() => {
+  appStore.loadMe()
+  loadSiteConfig()
+})
 </script>
 
 <template>

@@ -1,10 +1,14 @@
 <script setup>
-import { computed } from 'vue'
-import { RotateCcw, Save } from 'lucide-vue-next'
-import { siteConfig, defaultConfig, resetConfig, resetPage } from '../lib/siteConfig'
+import { computed, reactive, ref } from 'vue'
+import { LoaderCircle, RotateCcw, Save } from 'lucide-vue-next'
+import { siteConfig, defaultConfig, saveSiteConfig, resetConfig, resetPage } from '../lib/siteConfig'
 import { appStore } from '../stores/app'
 
 const isDeveloper = computed(() => !!appStore.state.me?.isDeveloper)
+const saving = ref(false)
+
+// 编辑副本，保存时才提交
+const draft = reactive(JSON.parse(JSON.stringify(siteConfig)))
 
 const pages = [
   { key: 'home', label: '首页', fields: [
@@ -38,9 +42,31 @@ const pages = [
   ]},
 ]
 
-function saveAll() { appStore.toast('配置已保存（本地存储）', 'success') }
-function handleResetPage(pageKey) { resetPage(pageKey); appStore.toast(`${pages.find(p => p.key === pageKey)?.label} 已恢复默认`, 'success') }
-function handleResetAll() { resetConfig(); appStore.toast('所有页面已恢复默认文案', 'success') }
+async function saveAll() {
+  saving.value = true
+  try {
+    await saveSiteConfig(draft)
+    appStore.toast('配置已保存，对所有访客生效', 'success')
+  } catch (error) {
+    appStore.toast(error.message || '保存失败', 'error')
+  } finally {
+    saving.value = false
+  }
+}
+
+function handleResetPage(pageKey) {
+  resetPage(pageKey)
+  Object.assign(draft[pageKey], JSON.parse(JSON.stringify(defaultConfig[pageKey])))
+  appStore.toast(`${pages.find(p => p.key === pageKey)?.label} 已恢复默认（需点击保存生效）`, 'success')
+}
+
+function handleResetAll() {
+  resetConfig()
+  Object.keys(defaultConfig).forEach((page) => {
+    Object.assign(draft[page], JSON.parse(JSON.stringify(defaultConfig[page])))
+  })
+  appStore.toast('所有页面已恢复默认（需点击保存生效）', 'success')
+}
 </script>
 
 <template>
@@ -49,16 +75,19 @@ function handleResetAll() { resetConfig(); appStore.toast('所有页面已恢复
       <div>
         <span class="eyebrow">SITE CONFIGURATION</span>
         <h1>页面文案<br /><em>个性化配置</em></h1>
-        <p>自定义每个页面的标题、副标题和宣传文案。修改会实时保存到本地，刷新页面后仍然生效。</p>
+        <p>自定义每个页面的标题、副标题和宣传文案。保存后对所有访客生效。</p>
       </div>
       <div class="settings-actions">
-        <button class="button button--ghost" type="button" @click="handleResetAll"><RotateCcw :size="16" /> 恢复全部默认</button>
-        <button class="button" type="button" @click="saveAll"><Save :size="16" /> 保存配置</button>
+        <button class="button button--ghost" type="button" :disabled="saving" @click="handleResetAll"><RotateCcw :size="16" /> 恢复全部默认</button>
+        <button class="button" type="button" :disabled="saving" @click="saveAll">
+          <LoaderCircle v-if="saving" class="spin" :size="16" />
+          <Save v-else :size="16" /> 保存配置
+        </button>
       </div>
     </section>
 
     <div v-if="!isDeveloper" class="settings-notice">
-      <p>配置功能当前对所有登录用户开放。修改仅保存在你的浏览器本地，不会影响其他用户。</p>
+      <p>只有开发者可以修改配置。当前为只读模式。</p>
     </div>
 
     <section v-for="page in pages" :key="page.key" class="settings-section">
@@ -67,13 +96,13 @@ function handleResetAll() { resetConfig(); appStore.toast('所有页面已恢复
           <strong>{{ page.label }}</strong>
           <small>{{ page.fields.length }} 个可配置项</small>
         </div>
-        <button class="button button--ghost button--compact" type="button" @click="handleResetPage(page.key)"><RotateCcw :size="14" /> 恢复默认</button>
+        <button class="button button--ghost button--compact" type="button" :disabled="saving || !isDeveloper" @click="handleResetPage(page.key)"><RotateCcw :size="14" /> 恢复默认</button>
       </header>
       <div class="settings-fields">
         <label v-for="field in page.fields" :key="field.key" :class="{ full: field.area }">
           <span>{{ field.label }}</span>
-          <textarea v-if="field.area" v-model="siteConfig[page.key][field.key]" rows="3" />
-          <input v-else v-model="siteConfig[page.key][field.key]" />
+          <textarea v-if="field.area" v-model="draft[page.key][field.key]" rows="3" :disabled="!isDeveloper" />
+          <input v-else v-model="draft[page.key][field.key]" :disabled="!isDeveloper" />
           <small v-if="defaultConfig[page.key][field.key]">默认：{{ defaultConfig[page.key][field.key] }}</small>
         </label>
       </div>

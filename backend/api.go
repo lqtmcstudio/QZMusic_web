@@ -54,6 +54,8 @@ func (s *Server) routes() http.Handler {
         mux.HandleFunc("POST /api/blueprints/{id}/vote", s.handleVote)
         mux.HandleFunc("GET /api/admin/bans", s.handleListCommunityBans)
         mux.HandleFunc("DELETE /api/admin/bans/{userId}", s.handleRemoveCommunityBan)
+        mux.HandleFunc("GET /api/config", s.handleGetSiteConfig)
+        mux.HandleFunc("PUT /api/config", s.handleUpdateSiteConfig)
         mux.HandleFunc("GET /auth/login", s.auth.handleLogin)
         mux.HandleFunc("GET /auth/callback", s.auth.handleCallback)
         mux.HandleFunc("POST /auth/logout", s.auth.handleLogout)
@@ -931,4 +933,64 @@ func spaHandler(dist string) http.Handler {
                 }
                 http.NotFound(w, r)
         })
+}
+
+func (s *Server) handleGetSiteConfig(w http.ResponseWriter, r *http.Request) {
+        rows, err := s.store.db.QueryContext(r.Context(), `SELECT key, value FROM site_config`)
+        if err != nil {
+                writeError(w, http.StatusInternalServerError, "config_failed", "无法读取站点配置")
+                return
+        }
+        defer rows.Close()
+        config := map[string]string{}
+        for rows.Next() {
+                var key, value string
+                if err := rows.Scan(&key, &value); err != nil {
+                        continue
+                }
+                config[key] = value
+        }
+        writeJSON(w, http.StatusOK, config)
+}
+
+func (s *Server) handleUpdateSiteConfig(w http.ResponseWriter, r *http.Request) {
+        user := requireDeveloper(w, r)
+        if user == nil {
+                return
+        }
+        var input map[string]string
+        if !decodeJSON(w, r, &input, 256<<10) {
+                return
+        }
+        if len(input) == 0 {
+                writeError(w, http.StatusBadRequest, "empty_config", "配置内容不能为空")
+                return
+        }
+        now := time.Now().UTC().Format(time.RFC3339)
+        tx, err := s.store.db.BeginTx(r.Context(), nil)
+        if err != nil {
+                writeError(w, http.StatusInternalServerError, "config_failed", "配置保存失败")
+                return
+        }
+        defer tx.Rollback()
+        for key, value := range input {
+                if strings.TrimSpace(key) == "" || len(key) > 64 {
+                        continue
+                }
+                if len(value) > 10000 {
+                        value = string([]rune(value)[:10000])
+                }
+                _, err := tx.ExecContext(r.Context(), `INSERT INTO site_config (key, value, updated_at, updated_by) VALUES (?, ?, ?, ?)
+                        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
+                        key, value, now, user.ID)
+                if err != nil {
+                        writeError(w, http.StatusInternalServerError, "config_failed", "配置保存失败")
+                        return
+                }
+        }
+        if err := tx.Commit(); err != nil {
+                writeError(w, http.StatusInternalServerError, "config_failed", "配置保存失败")
+                return
+        }
+        writeJSON(w, http.StatusOK, map[string]any{"ok": true})
 }

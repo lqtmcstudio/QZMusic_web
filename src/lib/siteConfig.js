@@ -1,7 +1,7 @@
-import { reactive, watch } from 'vue'
+import { reactive } from 'vue'
+import { api } from './api'
 
-const STORAGE_KEY = 'qz-site-config'
-
+// 各页面的默认文案（后端未配置时使用）
 export const defaultConfig = {
   home: {
     heroBadge: 'QZ Music v2 正在持续生长',
@@ -34,31 +34,62 @@ export const defaultConfig = {
   },
 }
 
-function deepMerge(target, source) {
-  const result = JSON.parse(JSON.stringify(target))
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key])
-    } else {
-      result[key] = source[key]
+// 把后端扁平的 { "home.heroBadge": "xxx" } 转成嵌套结构
+function flattenToNested(flat) {
+  const result = JSON.parse(JSON.stringify(defaultConfig))
+  for (const [key, value] of Object.entries(flat)) {
+    const [page, field] = key.split('.')
+    if (page && field && result[page]) {
+      result[page][field] = value
     }
   }
   return result
 }
 
-function loadConfig() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) return deepMerge(defaultConfig, JSON.parse(stored))
-  } catch {}
-  return JSON.parse(JSON.stringify(defaultConfig))
+// 把嵌套结构转成扁平的 { "home.heroBadge": "xxx" }
+function nestedToFlatten(nested) {
+  const flat = {}
+  for (const [page, fields] of Object.entries(nested)) {
+    for (const [field, value] of Object.entries(fields)) {
+      flat[`${page}.${field}`] = value
+    }
+  }
+  return flat
 }
 
-export const siteConfig = reactive(loadConfig())
+export const siteConfig = reactive(JSON.parse(JSON.stringify(defaultConfig)))
+let loaded = false
 
-watch(siteConfig, () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(siteConfig))
-}, { deep: true })
+// 从后端加载配置（全局生效）
+export async function loadSiteConfig() {
+  if (loaded) return
+  try {
+    const data = await api.getSiteConfig()
+    const nested = flattenToNested(data)
+    Object.keys(nested).forEach((page) => {
+      Object.keys(nested[page]).forEach((key) => {
+        siteConfig[page][key] = nested[page][key]
+      })
+    })
+  } catch {
+    // 后端不可用时静默使用默认值
+  } finally {
+    loaded = true
+  }
+}
+
+// 保存配置到后端（仅开发者）
+export async function saveSiteConfig(nested) {
+  const flat = nestedToFlatten(nested)
+  await api.updateSiteConfig(flat)
+  // 更新本地响应式对象
+  const updated = flattenToNested(flat)
+  Object.keys(updated).forEach((page) => {
+    Object.keys(updated[page]).forEach((key) => {
+      siteConfig[page][key] = updated[page][key]
+    })
+  })
+}
 
 export function resetConfig() {
   Object.keys(defaultConfig).forEach((page) => {
