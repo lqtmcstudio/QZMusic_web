@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowRight, AudioLines, Blocks, Cloud, Code2, Gauge, Sparkles } from 'lucide-vue-next'
+import { ArrowRight, AudioLines, Blocks, Cloud, Code2, Gauge, Github, Sparkles, Tv } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import logoUrl from '../../src/icon.png'
 
@@ -8,6 +8,20 @@ const features = [
   { icon: AudioLines, title: '纯粹播放', copy: '专注播放、歌词与手感，不堆砌臃肿功能。' },
   { icon: Cloud, title: '云端同步', copy: '同步歌单与偏好设置，不存储你的音频文件。' },
   { icon: Gauge, title: 'Compose UI', copy: 'Jetpack Compose 构建的新一代流畅交互。' },
+]
+
+const contributors = [
+  {
+    name: 'miao',
+    handle: '@miao-moe',
+    avatar: 'https://avatars.githubusercontent.com/u/108458240?v=4',
+    github: 'https://github.com/miao-moe',
+    bilibili: 'https://space.bilibili.com/3546566025140405',
+    tags: [
+      { icon: Code2, label: '官网重构' },
+      { icon: Tv, label: 'PC 端维护' },
+    ],
+  },
 ]
 </script>
 
@@ -80,6 +94,37 @@ const features = [
         <div class="portal-icon"><AudioLines :size="38" /></div>
         <span class="portal-arrow">↗</span>
       </RouterLink>
+    </section>
+
+    <section class="contributors shell-width">
+      <div class="section-heading">
+        <span class="eyebrow">BUILT TOGETHER</span>
+        <h2>那些让 QZ Music<br />变得更好的人。</h2>
+      </div>
+      <div class="contributor-grid">
+        <article v-for="person in contributors" :key="person.handle" class="contributor-card">
+          <header>
+            <img :src="person.avatar" :alt="person.name" loading="lazy" />
+            <div>
+              <strong>{{ person.name }}</strong>
+              <a :href="person.github" target="_blank" rel="noreferrer noopener">{{ person.handle }}</a>
+            </div>
+          </header>
+          <ul class="contributor-tags">
+            <li v-for="tag in person.tags" :key="tag.label">
+              <component :is="tag.icon" :size="14" /> {{ tag.label }}
+            </li>
+          </ul>
+          <footer>
+            <a class="contributor-link contributor-link--github" :href="person.github" target="_blank" rel="noreferrer noopener">
+              <Github :size="16" /> GitHub
+            </a>
+            <a v-if="person.bilibili" class="contributor-link contributor-link--bili" :href="person.bilibili" target="_blank" rel="noreferrer noopener">
+              <Tv :size="16" /> 哔哩哔哩
+            </a>
+          </footer>
+        </article>
+      </div>
     </section>
   </div>
 </template>
