@@ -64,7 +64,7 @@ onBeforeUnmount(() => window.clearInterval(refreshTimer))
       <div>
         <span class="eyebrow">MASTER BRANCH CHANGELOG</span>
         <h1>每一次提交，<br /><em>都算数。</em></h1>
-        <p>直接从项目仓库的 master 分支整理更新轨迹。文件数量与代码增减来自 GitHub Commit 统计。</p>
+        <p>直接从项目仓库 master 分支整理更新轨迹，文件数量与代码增减均来自 GitHub Commit 统计。</p>
       </div>
       <div class="history-pulse" aria-hidden="true">
         <GitCommitHorizontal :size="28" />

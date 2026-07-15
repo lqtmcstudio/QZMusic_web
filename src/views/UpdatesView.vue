@@ -98,7 +98,7 @@ onMounted(load)
       <div>
         <span class="eyebrow">FROM THE BUILD ROOM</span>
         <h1>开发，不只是<br /><em>完成清单。</em></h1>
-        <p>这里记录新功能、修复和那些值得说出来的取舍。来自 QZ Music 开发者的第一手现场。</p>
+        <p>这里记录新功能、修复，以及那些值得讲述的取舍。来自 QZ Music 开发者的第一手记录。</p>
       </div>
       <div class="code-note" aria-hidden="true">
         <span>01</span><p><b>feat</b>(player): spring motion</p>

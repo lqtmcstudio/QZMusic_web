@@ -142,7 +142,7 @@ onMounted(load)
       <div>
         <span class="eyebrow">PUBLIC BLUEPRINT</span>
         <h1>下一曲，<br /><em>由你参与。</em></h1>
-        <p>开发进度不再藏在提交记录里。看看正在发生什么，或者把你的好点子带进来。</p>
+        <p>开发进度不再藏在提交记录里。看看正在发生什么，或把你的好点子带进来。</p>
       </div>
       <div class="hero-stat-grid">
         <div><strong>实时</strong><span>开发进度</span></div>

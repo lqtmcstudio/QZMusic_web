@@ -4,9 +4,9 @@ import { RouterLink } from 'vue-router'
 import logoUrl from '../../src/icon.png'
 
 const features = [
-  { icon: Blocks, title: '插件化', copy: '以 NodeJS 为插件基础平台，让音乐能力自由延伸。' },
-  { icon: AudioLines, title: '纯粹播放', copy: '专注播放、歌词与手感，不把体验交给臃肿功能。' },
-  { icon: Cloud, title: '云端同步', copy: '同步歌单配置与偏好，不存储你的音频文件。' },
+  { icon: Blocks, title: '插件化', copy: '基于 NodeJS 的插件体系，让音乐能力自由延伸。' },
+  { icon: AudioLines, title: '纯粹播放', copy: '专注播放、歌词与手感，不堆砌臃肿功能。' },
+  { icon: Cloud, title: '云端同步', copy: '同步歌单与偏好设置，不存储你的音频文件。' },
   { icon: Gauge, title: 'Compose UI', copy: 'Jetpack Compose 构建的新一代流畅交互。' },
 ]
 </script>
@@ -17,12 +17,12 @@ const features = [
       <div class="hero-copy">
         <div class="hero-badge"><span /> QZ Music v2 正在持续生长</div>
         <h1>让每一次播放，<br /><em>都有回响。</em></h1>
-        <p>一款纯净、流畅，也愿意认真听取每个想法的多功能音乐播放器。</p>
+        <p>一款纯净、流畅，也认真倾听每种想法的多功能音乐播放器。</p>
         <div class="hero-actions">
           <RouterLink class="button" to="/blueprints">走进蓝图 <ArrowRight :size="18" /></RouterLink>
           <RouterLink class="text-link" to="/updates">阅读开发动态 <span>↗</span></RouterLink>
         </div>
-        <div class="hero-note"><Sparkles :size="17" /> 你提出的下一个想法，可能就是我们正在制作的功能。</div>
+        <div class="hero-note"><Sparkles :size="17" /> 你提出的下一个想法，或许正是我们正在打磨的功能。</div>
       </div>
 
       <div class="hero-visual" aria-label="QZ Music 产品视觉">
@@ -50,7 +50,7 @@ const features = [
         <span class="eyebrow">BUILT WITH THE COMMUNITY</span>
         <h2>播放器由代码构成，<br />体验由每个人共同完成。</h2>
       </div>
-      <p>从 Flutter 到 Jetpack Compose，从单一脚本到 NodeJS 插件系统，QZ Music 的每次重构都为了更轻、更自由。现在，开发过程也向你打开。</p>
+      <p>从 Flutter 到 Jetpack Compose，从单一脚本到 NodeJS 插件系统，QZ Music 的每一次重构，都为了更轻、更自由。如今，开发过程也向你敞开。</p>
     </section>
 
     <section class="feature-grid shell-width">
@@ -66,7 +66,7 @@ const features = [
         <div>
           <span class="eyebrow">BLUEPRINT</span>
           <h2>下一曲，<br />由你参与。</h2>
-          <p>查看实时进度、提交功能请求，为真正想要的功能投票。</p>
+          <p>查看实时进度、提交功能请求，为真正想要的功能投上一票。</p>
         </div>
         <div class="portal-icon"><Code2 :size="38" /></div>
         <span class="portal-arrow">↗</span>

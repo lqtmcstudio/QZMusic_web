@@ -376,14 +376,38 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 700px) {
-  .shell-width { width: min(100% - 28px, 1180px); }.site-header { overflow: visible; }.nav, .site-header.is-scrolled .nav { height: 64px; }.brand span { display: none; }.mobile-menu { display: inline-grid; order: 2; }.nav-actions { order: 1; margin-left: auto; }.nav-center { position: absolute; top: 64px; left: 14px; right: 14px; display: none; flex-direction: column; align-items: stretch; padding: 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }.nav-center--open { display: flex; }.nav-center a { text-align: center; }.profile-button b { display: none; }.profile-button--text-only b { display: block; }.profile-button { padding-right: 4px; }.profile-button--text-only { padding-inline: 12px; }.nav-actions > .button { width: 40px; min-width: 40px; padding: 0; font-size: 0; }
-  .home-hero { min-height: auto; gap: 35px; padding-block: 45px 65px; }.hero-copy h1, .plaza-hero h1 { font-size: clamp(43px, 14vw, 62px); }.hero-copy > p { font-size: 15px; }.hero-actions { flex-direction: column; gap: 16px; }.hero-visual { min-height: 400px; }.logo-stage { top: 46px; width: 230px; height: 230px; }.orb--one { width: 190px; height: 190px; }.orb--two { width: 210px; height: 210px; }.floating-card--progress { left: 0; bottom: 10px; width: 210px; }.floating-card--signal { top: 25px; right: 0; }
+  .shell-width { width: min(100% - 28px, 1180px); }.site-header { overflow: visible; }.nav, .site-header.is-scrolled .nav { height: 64px; }.brand span { display: none; }.mobile-menu { display: inline-grid; order: 2; }.nav-actions { order: 1; margin-left: auto; }.nav-center { position: absolute; top: 64px; left: 14px; right: 14px; max-height: calc(100vh - 84px); overflow-y: auto; display: none; flex-direction: column; align-items: stretch; padding: 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow); }.nav-center--open { display: flex; }.nav-center a { text-align: center; }.profile-button b { display: none; }.profile-button--text-only b { display: block; }.profile-button { padding-right: 4px; }.profile-button--text-only { padding-inline: 12px; }.nav-actions > .button { width: 40px; min-width: 40px; padding: 0; font-size: 0; }.profile-menu { right: 0; max-width: calc(100vw - 28px); }
+  .home-hero { min-height: auto; gap: 35px; padding-block: 45px 65px; }.hero-copy h1, .plaza-hero h1 { font-size: clamp(43px, 14vw, 62px); }.hero-copy > p { font-size: 15px; }.hero-actions { flex-direction: column; gap: 16px; }.hero-visual { min-height: 400px; }.logo-stage { top: 46px; width: 230px; height: 230px; }.orb--one { width: 190px; height: 190px; }.orb--two { width: 210px; height: 210px; }.floating-card--progress { left: 0; bottom: 10px; width: 185px; }.floating-card--signal { top: 25px; right: 0; width: 130px; }
   .home-manifesto { padding-block: 70px 40px; }.section-heading h2 { font-size: 34px; }.feature-grid { grid-template-columns: 1fr; margin-bottom: 70px; }.feature-grid article { min-height: 190px; }.feature-grid h3 { margin-top: 28px; }.portal-grid { grid-template-columns: 1fr; padding-bottom: 70px; }.portal { min-height: 360px; }.portal h2 { font-size: 36px; }.portal-icon { width: 70px; height: 70px; right: 28px; bottom: 28px; }
   .plaza-hero { min-height: auto; padding-block: 55px 35px; }.hero-stat-grid div:first-child { min-height: 190px; }.plaza-toolbar { top: 72px; padding-left: 12px; border-radius: 18px; }.plaza-toolbar .button { width: 40px; min-width: 40px; padding: 0; font-size: 0; }.plaza-toolbar > div:not(.filter-tabs) > span:last-child { display: none; }.filter-tabs button { padding-inline: 10px; }.card-content, .update-card:nth-child(3n + 1) .card-content { padding: 23px; }.update-card:nth-child(3n + 1) .card-content > h2 { font-size: 25px; }.card-footer { align-items: end; }.form-split { grid-template-columns: 1fr; }.form-footer { align-items: stretch; flex-direction: column; }.form-footer .button { width: 100%; }.modal-backdrop { padding: 0; align-items: end; }.modal-panel { max-height: 94vh; border-radius: 24px 24px 0 0; }.modal-header, .modal-body { padding-inline: 20px; }
   .site-footer { flex-direction: column; align-items: flex-start; justify-content: center; }.site-footer > p { padding-left: 55px; }.toast-stack { left: 14px; right: 14px; align-items: stretch; }.toast { max-width: none; }.comment-drawer { border-left: 0; }
   .docs-view { padding-block: 24px 70px; }.docs-sidebar { padding: 16px; }.docs-sidebar nav { grid-template-columns: 1fr; }.docs-sidebar nav section + section { margin-top: 16px; }.docs-main { padding: 30px 20px 24px; border-radius: 20px; }.docs-page-heading { align-items: flex-start; flex-direction: column; gap: 7px; }.docs-article { font-size: 13px; }.docs-article table { display: block; overflow-x: auto; white-space: nowrap; }.docs-pagination { grid-template-columns: 1fr; }.docs-pagination span { display: none; }
   .history-view { padding-bottom: 70px; }.history-hero { min-height: auto; padding-block: 52px 34px; }.history-hero h1 { font-size: clamp(44px, 14vw, 62px); }.history-pulse { height: 140px; }.platform-switch { grid-template-columns: 1fr; }.history-toolbar { align-items: flex-start; flex-direction: column; }.commit-card { grid-template-columns: 20px minmax(0, 1fr); gap: 7px; }.commit-rail i { display: none; }.commit-main { padding: 18px; }.commit-main > footer { grid-template-columns: 1fr auto; }.commit-stats { grid-column: 1 / -1; grid-row: 2; justify-content: space-between; }.commit-main > footer > a { grid-column: 2; grid-row: 1; }.commit-main h2 { font-size: 16px; }.commit-main > header { align-items: flex-start; flex-direction: column; gap: 6px; }
   .delete-dialog__actions { display: grid; grid-template-columns: 1fr; }.delete-dialog__actions .button { width: 100%; }.ban-view { padding-block: 35px 70px; }.ban-hero { min-height: auto; grid-template-columns: 1fr; padding: 28px; }.ban-hero__mark { display: none; }.ban-hero h1 { font-size: 44px; }.ban-item { align-items: flex-start; flex-direction: column; }.ban-item .button { width: 100%; }.ban-user > div:last-child { grid-template-columns: 1fr; }.ban-user small { grid-column: auto; }
+}
+
+@media (max-width: 480px) {
+  .hero-copy h1, .plaza-hero h1 { font-size: clamp(38px, 12vw, 56px); }
+  .history-hero h1 { font-size: clamp(38px, 12vw, 56px); }
+  .hero-visual { min-height: 340px; }
+  .logo-stage { top: 40px; width: 188px; height: 188px; }
+  .orb--one { width: 148px; height: 148px; }
+  .orb--two { width: 168px; height: 168px; }
+  .floating-card--progress { width: 168px; padding: 14px; bottom: 14px; }
+  .floating-card--progress strong { margin: 8px 0 10px; font-size: 13px; }
+  .floating-card--signal { display: none; }
+  .portal { min-height: 300px; padding: 28px; }
+  .portal h2 { font-size: 30px; }
+  .portal-icon { width: 60px; height: 60px; right: 22px; bottom: 22px; }
+  .portal-arrow { top: 26px; right: 24px; font-size: 26px; }
+  .hero-stat-grid div:first-child { min-height: 160px; }
+  .hero-stat-grid div { min-height: 100px; padding: 16px; }
+  .hero-stat-grid strong { font-size: 22px; }
+  .hero-stat-grid div:first-child strong { font-size: 38px; }
+  .commit-main { padding: 16px; }
+  .commit-main h2 { font-size: 15px; }
+  .docs-main { padding: 24px 16px 20px; }
+  .docs-article > h1:first-child { font-size: 27px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
