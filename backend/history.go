@@ -23,6 +23,7 @@ const githubHistoryQuery = `query CommitHistory($owner: String!, $name: String!,
             nodes {
               oid
               messageHeadline
+              message
               committedDate
               additions
               deletions
@@ -60,6 +61,7 @@ type GitHubCommit struct {
 	Repository   string `json:"repository"`
 	SHA          string `json:"sha"`
 	Title        string `json:"title"`
+	Body         string `json:"body,omitempty"`
 	AuthorName   string `json:"authorName"`
 	AuthorLogin  string `json:"authorLogin,omitempty"`
 	AuthorAvatar string `json:"authorAvatar,omitempty"`
@@ -103,6 +105,7 @@ type githubGraphQLResponse struct {
 type githubCommitNode struct {
 	OID             string `json:"oid"`
 	MessageHeadline string `json:"messageHeadline"`
+	Message         string `json:"message"`
 	CommittedDate   string `json:"committedDate"`
 	Additions       int    `json:"additions"`
 	Deletions       int    `json:"deletions"`
@@ -259,12 +262,14 @@ func (h *HistoryService) cacheCommitPage(ctx context.Context, repo historyRepo, 
 			authorLogin = node.Author.User.Login
 			authorAvatar = node.Author.User.AvatarURL
 		}
+		body := extractCommitBody(node.Message, node.MessageHeadline)
 		_, err := tx.ExecContext(ctx, `INSERT INTO github_commits (
-			platform, repo_full_name, sha, title, author_name, author_login, author_avatar,
+			platform, repo_full_name, sha, title, body, author_name, author_login, author_avatar,
 			committed_at, files_changed, additions, deletions, html_url, cached_at
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT(repo_full_name, sha) DO UPDATE SET
 			title = excluded.title,
+			body = excluded.body,
 			author_name = excluded.author_name,
 			author_login = excluded.author_login,
 			author_avatar = excluded.author_avatar,
@@ -274,13 +279,32 @@ func (h *HistoryService) cacheCommitPage(ctx context.Context, repo historyRepo, 
 			deletions = excluded.deletions,
 			html_url = excluded.html_url,
 			cached_at = excluded.cached_at`,
-			repo.Platform, repo.FullName, node.OID, strings.TrimSpace(node.MessageHeadline), strings.TrimSpace(node.Author.Name), authorLogin, authorAvatar,
+			repo.Platform, repo.FullName, node.OID, strings.TrimSpace(node.MessageHeadline), body, strings.TrimSpace(node.Author.Name), authorLogin, authorAvatar,
 			node.CommittedDate, max(0, node.ChangedFiles), max(0, node.Additions), max(0, node.Deletions), node.URL, cachedAt)
 		if err != nil {
 			return err
 		}
 	}
 	return tx.Commit()
+}
+
+func extractCommitBody(message, headline string) string {
+	trimmed := strings.TrimSpace(message)
+	if trimmed == "" {
+		return ""
+	}
+	headline = strings.TrimSpace(headline)
+	if headline == "" {
+		return trimmed
+	}
+	// The full message starts with the headline, then optionally a blank line and the body.
+	rest := trimmed
+	if strings.HasPrefix(rest, headline) {
+		rest = rest[len(headline):]
+	}
+	rest = strings.TrimLeft(rest, "\r\n")
+	rest = strings.TrimSpace(rest)
+	return rest
 }
 
 func (h *HistoryService) recordSyncFailure(ctx context.Context, repo historyRepo, syncErr error) {
@@ -332,7 +356,7 @@ func historyQueryInt(raw string, fallback, minimum, maximum int) int {
 }
 
 func (s *Server) queryHistory(ctx context.Context, platform string, limit, offset int) ([]GitHubCommit, error) {
-	rows, err := s.store.db.QueryContext(ctx, `SELECT platform, repo_full_name, sha, title, author_name, author_login, author_avatar,
+	rows, err := s.store.db.QueryContext(ctx, `SELECT platform, repo_full_name, sha, title, body, author_name, author_login, author_avatar,
 		committed_at, files_changed, additions, deletions, html_url
 		FROM github_commits WHERE platform = ? ORDER BY committed_at DESC LIMIT ? OFFSET ?`, platform, limit, offset)
 	if err != nil {
@@ -342,7 +366,7 @@ func (s *Server) queryHistory(ctx context.Context, platform string, limit, offse
 	items := make([]GitHubCommit, 0)
 	for rows.Next() {
 		var item GitHubCommit
-		if err := rows.Scan(&item.Platform, &item.Repository, &item.SHA, &item.Title, &item.AuthorName, &item.AuthorLogin, &item.AuthorAvatar,
+		if err := rows.Scan(&item.Platform, &item.Repository, &item.SHA, &item.Title, &item.Body, &item.AuthorName, &item.AuthorLogin, &item.AuthorAvatar,
 			&item.CommittedAt, &item.FilesChanged, &item.Additions, &item.Deletions, &item.URL); err != nil {
 			return nil, err
 		}

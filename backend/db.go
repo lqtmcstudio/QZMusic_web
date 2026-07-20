@@ -84,6 +84,7 @@ func (s *Store) migrate(ctx context.Context) error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			title TEXT NOT NULL,
 			body TEXT NOT NULL,
+			scope TEXT NOT NULL DEFAULT '',
 			author_id INTEGER NOT NULL REFERENCES users(id),
 			created_at TEXT NOT NULL,
 			updated_at TEXT NOT NULL
@@ -133,6 +134,7 @@ func (s *Store) migrate(ctx context.Context) error {
 			repo_full_name TEXT NOT NULL,
 			sha TEXT NOT NULL,
 			title TEXT NOT NULL,
+			body TEXT NOT NULL DEFAULT '',
 			author_name TEXT NOT NULL DEFAULT '',
 			author_login TEXT NOT NULL DEFAULT '',
 			author_avatar TEXT NOT NULL DEFAULT '',
@@ -155,6 +157,12 @@ func (s *Store) migrate(ctx context.Context) error {
 		`CREATE INDEX IF NOT EXISTS idx_comments_entity ON comments(entity_type, entity_id, created_at)`,
 		`CREATE INDEX IF NOT EXISTS idx_comments_author_created ON comments(author_id, created_at)`,
 		`CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(expires_at)`,
+				`CREATE TABLE IF NOT EXISTS site_config (
+			key TEXT PRIMARY KEY,
+			value TEXT NOT NULL,
+			updated_at TEXT NOT NULL,
+			updated_by INTEGER REFERENCES users(id)
+		)`,
 		`CREATE INDEX IF NOT EXISTS idx_github_commits_platform_time ON github_commits(platform, committed_at DESC)`,
 	}
 	for _, statement := range statements {
@@ -169,6 +177,8 @@ func (s *Store) migrate(ctx context.Context) error {
 	if _, err := s.db.ExecContext(ctx, `DROP TABLE blueprint_bans`); err != nil {
 		return fmt.Errorf("remove legacy bans: %w", err)
 	}
+	// Add scope column to updates if missing (for existing databases).
+	s.db.ExecContext(ctx, `ALTER TABLE updates ADD COLUMN scope TEXT NOT NULL DEFAULT ''`)
 	return nil
 }
 
@@ -235,6 +245,23 @@ func displayTime(value string, location *time.Location) string {
 }
 
 func validEntityType(value string) bool { return value == "blueprints" || value == "updates" }
+
+func normalizeScope(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "frontend", "vue", "前端":
+		return "frontend"
+	case "backend", "go", "后端":
+		return "backend"
+	case "android", "安卓":
+		return "android"
+	case "pc", "windows", "pc端":
+		return "pc"
+	case "all", "全端":
+		return "all"
+	default:
+		return ""
+	}
+}
 
 func (s *Store) entityExists(ctx context.Context, entityType string, id int64) (bool, error) {
 	if !validEntityType(entityType) {

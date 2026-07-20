@@ -7,6 +7,7 @@ import ImageUploader from '../components/ImageUploader.vue'
 import ModalShell from '../components/ModalShell.vue'
 import { api } from '../lib/api'
 import { appStore } from '../stores/app'
+import { siteConfig } from '../lib/siteConfig'
 
 const filters = [
   { value: '', label: '全部' },
@@ -140,9 +141,9 @@ onMounted(load)
   <div class="plaza-view">
     <section class="plaza-hero plaza-hero--blueprint shell-width">
       <div>
-        <span class="eyebrow">PUBLIC BLUEPRINT</span>
-        <h1>下一曲，<br /><em>由你参与。</em></h1>
-        <p>开发进度不再藏在提交记录里。看看正在发生什么，或者把你的好点子带进来。</p>
+        <span class="eyebrow">{{ siteConfig.blueprints.heroEyebrow }}</span>
+        <h1>{{ siteConfig.blueprints.heroTitle }}<br /><em>{{ siteConfig.blueprints.heroTitleEm }}</em></h1>
+        <p>{{ siteConfig.blueprints.heroSubtitle }}</p>
       </div>
       <div class="hero-stat-grid">
         <div><strong>实时</strong><span>开发进度</span></div>

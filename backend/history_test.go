@@ -29,10 +29,12 @@ func TestGitHubHistorySyncCachesMasterCommits(t *testing.T) {
 		call := calls.Add(1)
 		sha := "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 		title := "first commit"
+		message := "first commit\n\n- init project\n- add config"
 		committedAt := "2026-07-14T12:00:00Z"
 		if call > 1 {
 			sha = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 			title = "new commit"
+			message = "new commit\n\n- feat(player): add lyrics\n- fix(ui): dark mode"
 			committedAt = "2026-07-14T13:00:00Z"
 		}
 		writeJSON(w, http.StatusOK, map[string]any{
@@ -42,7 +44,7 @@ func TestGitHubHistorySyncCachesMasterCommits(t *testing.T) {
 						"target": map[string]any{
 							"history": map[string]any{
 								"nodes": []map[string]any{{
-									"oid": sha, "messageHeadline": title, "committedDate": committedAt,
+									"oid": sha, "messageHeadline": title, "message": message, "committedDate": committedAt,
 									"additions": 11225, "deletions": 1475, "changedFiles": 32,
 									"url":    "https://github.com/example/repo/commit/" + sha,
 									"author": map[string]any{"name": "QZ Dev", "user": map[string]any{"login": "qzdev", "avatarUrl": "https://example.com/avatar.png"}},
@@ -82,6 +84,12 @@ func TestGitHubHistorySyncCachesMasterCommits(t *testing.T) {
 	}
 	if items[0].Title != "new commit" || items[0].FilesChanged != 32 || items[0].Additions != 11225 || items[0].Deletions != 1475 {
 		t.Fatalf("newest commit = %+v", items[0])
+	}
+	if items[0].Body != "- feat(player): add lyrics\n- fix(ui): dark mode" {
+		t.Fatalf("newest commit body = %q", items[0].Body)
+	}
+	if items[1].Body != "- init project\n- add config" {
+		t.Fatalf("older commit body = %q", items[1].Body)
 	}
 	state := server.queryHistoryState(context.Background(), "android")
 	if state.LastSuccess == "" || state.Error != "" {

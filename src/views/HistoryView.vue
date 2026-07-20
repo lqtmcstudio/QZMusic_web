@@ -3,6 +3,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { AlertCircle, ExternalLink, FileCode2, GitCommitHorizontal, LoaderCircle, Monitor, RefreshCw, Smartphone } from 'lucide-vue-next'
 import { api } from '../lib/api'
 import { appStore } from '../stores/app'
+import { renderMarkdown, renderCommitBody } from '../lib/markdown'
+import { siteConfig } from '../lib/siteConfig'
 
 const platforms = [
   { id: 'android', name: 'Android', repo: 'nevodev/QZ-Music', icon: Smartphone, note: '安卓版 · 私有仓库' },
@@ -62,9 +64,9 @@ onBeforeUnmount(() => window.clearInterval(refreshTimer))
   <div class="history-view shell-width">
     <section class="history-hero">
       <div>
-        <span class="eyebrow">MASTER BRANCH CHANGELOG</span>
-        <h1>每一次提交，<br /><em>都算数。</em></h1>
-        <p>直接从项目仓库的 master 分支整理更新轨迹。文件数量与代码增减来自 GitHub Commit 统计。</p>
+        <span class="eyebrow">{{ siteConfig.history.heroEyebrow }}</span>
+        <h1>{{ siteConfig.history.heroTitle }}<br /><em>{{ siteConfig.history.heroTitleEm }}</em></h1>
+        <p>{{ siteConfig.history.heroSubtitle }}</p>
       </div>
       <div class="history-pulse" aria-hidden="true">
         <GitCommitHorizontal :size="28" />
@@ -113,6 +115,7 @@ onBeforeUnmount(() => window.clearInterval(refreshTimer))
             <time :datetime="commit.committedAt">{{ formatDate(commit.committedAt) }}</time>
           </header>
           <h2>{{ commit.title }}</h2>
+          <div v-if="commit.body" class="commit-body markdown-body" v-html="renderCommitBody(commit.body)" />
           <footer>
             <div class="commit-author">
               <img v-if="commit.authorAvatar" :src="commit.authorAvatar" alt="" />

@@ -7,6 +7,7 @@ import UpdatesView from './views/UpdatesView.vue'
 import DocsView from './views/DocsView.vue'
 import HistoryView from './views/HistoryView.vue'
 import BanManagementView from './views/BanManagementView.vue'
+import SettingsView from './views/SettingsView.vue'
 import './style.css'
 
 const router = createRouter({
@@ -17,6 +18,7 @@ const router = createRouter({
     { path: '/updates', component: UpdatesView, meta: { title: '动态' } },
     { path: '/history', component: HistoryView, meta: { title: '更新历史' } },
     { path: '/admin/bans', component: BanManagementView, meta: { title: '封禁管理' } },
+    { path: '/settings', component: SettingsView, meta: { title: '页面配置' } },
     { path: '/docs/:pathMatch(.*)*', component: DocsView, meta: { title: '使用文档' } },
   ],
   scrollBehavior: () => ({ top: 0, behavior: 'smooth' }),

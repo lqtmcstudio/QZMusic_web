@@ -50,6 +50,8 @@ export const api = {
   deleteComment: (type, id, commentId, banAuthor = false) => request(`/api/${type}/${id}/comments/${commentId}`, { method: 'DELETE', body: { banAuthor } }),
   toggleLike: (type, id) => request(`/api/${type}/${id}/like`, { method: 'POST' }),
   vote: (id, choice) => request(`/api/blueprints/${id}/vote`, { method: 'POST', body: { choice } }),
+  getSiteConfig: () => request('/api/config'),
+  updateSiteConfig: (config) => request('/api/config', { method: 'PUT', body: config }),
   logout: () => request('/auth/logout', { method: 'POST' }),
   async upload(file) {
     if (file.size > 25 * 1024 * 1024) {

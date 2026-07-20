@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { BookOpen, ChevronRight, Search } from 'lucide-vue-next'
+import { BookOpen, ChevronRight, Menu, Search, X } from 'lucide-vue-next'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { renderMarkdown } from '../lib/markdown'
 
@@ -14,6 +14,7 @@ import sponsorship from '../../doc/sponsorship.md?raw'
 const route = useRoute()
 const router = useRouter()
 const query = ref('')
+const sidebarOpen = ref(false)
 
 const groups = [
   {
@@ -42,7 +43,11 @@ const currentSlug = computed(() => {
   const pathMatch = route.params.pathMatch
   return Array.isArray(pathMatch) ? pathMatch.join('/') : pathMatch || 'intro'
 })
-const current = computed(() => allPages.find((page) => page.slug === currentSlug.value) || allPages[0])
+const current = computed(() => {
+  const page = allPages.find((page) => page.slug === currentSlug.value) || allPages[0]
+  const group = groups.find((g) => g.pages.some((p) => p.slug === page.slug))
+  return { ...page, group: group?.title || '' }
+})
 const visibleGroups = computed(() => {
   const keyword = query.value.trim().toLocaleLowerCase()
   if (!keyword) return groups
@@ -82,26 +87,35 @@ function handleContentClick(event) {
     anchor.rel = 'noreferrer noopener'
   }
 }
+
+function closeSidebar() { sidebarOpen.value = false }
 </script>
 
 <template>
   <div class="docs-view shell-width">
-    <aside class="docs-sidebar">
+    <button class="docs-mobile-bar" type="button" @click="sidebarOpen = true">
+      <Menu :size="18" />
+      <span>{{ current.title }}</span>
+      <small>{{ current.group || '' }}</small>
+    </button>
+
+    <aside class="docs-sidebar" :class="{ 'docs-sidebar--open': sidebarOpen }">
       <div class="docs-sidebar-heading">
         <span><BookOpen :size="17" /> QZ 文档</span>
-        <small>旧站内容已完整迁入</small>
+        <button class="docs-sidebar-close" type="button" aria-label="关闭目录" @click="closeSidebar"><X :size="18" /></button>
       </div>
       <label class="docs-search"><Search :size="15" /><input v-model="query" aria-label="搜索文档" /></label>
       <nav aria-label="文档目录">
         <section v-for="group in visibleGroups" :key="group.title">
           <h2>{{ group.title }}</h2>
-          <RouterLink v-for="page in group.pages" :key="page.slug" :to="`/docs/${page.slug}`" :class="{ active: current.slug === page.slug }">
+          <RouterLink v-for="page in group.pages" :key="page.slug" :to="`/docs/${page.slug}`" :class="{ active: current.slug === page.slug }" @click="closeSidebar">
             <span><strong>{{ page.title }}</strong><small>{{ page.description }}</small></span>
             <ChevronRight :size="15" />
           </RouterLink>
         </section>
       </nav>
     </aside>
+    <div v-if="sidebarOpen" class="docs-sidebar-backdrop" @click="closeSidebar" />
 
     <section class="docs-main">
       <header class="docs-page-heading">

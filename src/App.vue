@@ -3,8 +3,12 @@ import { onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import { appStore } from './stores/app'
+import { loadSiteConfig } from './lib/siteConfig'
 
-onMounted(() => appStore.loadMe())
+onMounted(() => {
+  appStore.loadMe()
+  loadSiteConfig()
+})
 </script>
 
 <template>
@@ -22,7 +26,7 @@ onMounted(() => appStore.loadMe())
         <span class="footer-mark">QZ</span>
         <div>
           <strong>QZ Music v2</strong>
-          <p>纯净、开放，也认真听见每一种声音。</p>
+          <p>纯净、开放，认真倾听每一种声音。</p>
         </div>
       </div>
       <p>Copyright © 2025–{{ new Date().getFullYear() }} QZ Cat</p>

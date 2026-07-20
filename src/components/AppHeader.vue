@@ -68,6 +68,7 @@ async function logout() {
         <RouterLink to="/updates" @click="menuOpen = false">动态</RouterLink>
         <RouterLink to="/history" @click="menuOpen = false">更新</RouterLink>
         <RouterLink v-if="appStore.state.me?.isDeveloper" to="/admin/bans" @click="menuOpen = false">封禁管理</RouterLink>
+        <RouterLink v-if="appStore.state.me?.isDeveloper" to="/settings" @click="menuOpen = false">页面配置</RouterLink>
         <RouterLink to="/docs/intro" :class="{ 'router-link-active': route.path.startsWith('/docs') }" @click="menuOpen = false">文档</RouterLink>
       </div>
 
